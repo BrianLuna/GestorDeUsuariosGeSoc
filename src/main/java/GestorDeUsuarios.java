@@ -25,7 +25,6 @@ public class GestorDeUsuarios {
     /**
      * El constructor creará el archivo de credenciales guardadas si no existe, leerá el archivo de credenciales y guardará el HashMap en la variable {@code credenciales}.
      */
-    //TODO: Averiguar si el uso de FileWriter es correcto ya que usa una excepción chequeada.
     private GestorDeUsuarios() {
         this.archivoCredenciales = new File("credenciales.ser");
         this.levantarCredenciales();
@@ -36,25 +35,23 @@ public class GestorDeUsuarios {
      *  generar el HashMap con las credenciales almacenadas y asignarlas a la variable {@code credenciales}.
      *  En caso que el archivo esté vacío, asignará un nuevo HashMap a la variable {@code credenciales}.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked"})
     private void levantarCredenciales() {
         HashMap<String, String> credenciales;
 
         try {
-            if(!this.archivoCredenciales.createNewFile()){
-                FileInputStream fisCredenciales = new FileInputStream(this.archivoCredenciales);
-                ObjectInputStream oisCredenciales = new ObjectInputStream(fisCredenciales);
-                credenciales = (HashMap<String, String>) oisCredenciales.readObject();
-                oisCredenciales.close();
-                fisCredenciales.close();
-                this.credenciales = credenciales;
-            } else{
-                this.credenciales = new HashMap<>();
-            }
-        } catch (IOException | ClassNotFoundException i) {
-            i.printStackTrace();
+            this.archivoCredenciales.createNewFile();
+            FileInputStream fisCredenciales = new FileInputStream(this.archivoCredenciales);
+            ObjectInputStream oisCredenciales = new ObjectInputStream(fisCredenciales);
+            credenciales = (HashMap<String, String>) oisCredenciales.readObject();
+            oisCredenciales.close();
+            fisCredenciales.close();
+            this.credenciales = credenciales;
+        } catch(EOFException exception){
+            this.credenciales = new HashMap<>();
+        } catch (IOException | ClassNotFoundException exception) {
+            System.out.println(exception.getMessage());
         }
-
     }
 
     /**
@@ -134,7 +131,7 @@ public class GestorDeUsuarios {
             fosCredenciales.close();
             System.exit(0);
         } catch (IOException exception) {
-            exception.getMessage();
+            System.out.println(exception.getMessage());
         }
     }
 }
