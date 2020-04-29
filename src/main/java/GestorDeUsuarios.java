@@ -38,7 +38,7 @@ public class GestorDeUsuarios {
      */
     @SuppressWarnings("unchecked")
     private void levantarCredenciales() {
-        HashMap<String, String> credenciales = null;
+        HashMap<String, String> credenciales;
 
         try {
             if(!this.archivoCredenciales.createNewFile()){
