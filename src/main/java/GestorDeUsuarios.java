@@ -14,7 +14,9 @@ import java.util.regex.Pattern;
 public class GestorDeUsuarios {
     final private static GestorDeUsuarios INSTANCE = new GestorDeUsuarios();
     File archivoCredenciales;
+    File archivoCommonPasswords;
     HashMap<String, String> credenciales;
+    HashSet<String>  commonPasswords;
     //TODO: ¿La idea es que las condiciones de la password se ingresen por archivo de configuración al cargar el sistema (refactor to Enum) o que se pueda modificar en runtime (Clase)?
     final private List<Recomendacion> recomendaciones = Arrays.asList(new Recomendacion("(.*\\d.*)","Debe tener al menos un dígito numérico"),
                                                                 new Recomendacion("(.*[a-z].*)", "Debe tener al menos una letra minúscula"),
@@ -26,7 +28,9 @@ public class GestorDeUsuarios {
      * El constructor creará el archivo de credenciales guardadas si no existe, leerá el archivo de credenciales y guardará el HashMap en la variable {@code credenciales}.
      */
     private GestorDeUsuarios() {
-        this.archivoCredenciales = new File("credenciales.ser");
+        this.archivoCredenciales = new File("src/main/resources/credenciales.ser");
+        this.archivoCommonPasswords = new File("src/main/resources/commonPasswords.txt");
+        this.levantarCommonPasswords();
         this.levantarCredenciales();
     }
 
@@ -51,6 +55,30 @@ public class GestorDeUsuarios {
             this.credenciales = new HashMap<>();
         } catch (IOException | ClassNotFoundException exception) {
             System.out.println(exception.getMessage());
+        }
+    }
+
+    /**
+     *  El método {@code levantarCommonPassword()} se encarga de leer el archivo de contraseñas comunes,
+     *  generar el array con ellas y asignarlas a la variable {@code commonPasswords}.
+     */
+    private void levantarCommonPasswords() {
+        HashSet<String> commonPasswords = new HashSet<>();
+
+        try{
+            FileReader frCommonPasswords = new FileReader(this.archivoCommonPasswords);
+            BufferedReader brCommonPasswords = new BufferedReader(frCommonPasswords);
+            String lineaLeida;
+
+            while ((lineaLeida = brCommonPasswords.readLine()) != null){
+                commonPasswords.add(lineaLeida);
+            }
+            brCommonPasswords.close();
+            frCommonPasswords.close();
+            this.commonPasswords = commonPasswords;
+
+        } catch (IOException excepcion){
+            System.out.println(excepcion.getMessage());
         }
     }
 
@@ -88,6 +116,13 @@ public class GestorDeUsuarios {
      * @param password Es el password a validar.
      */
     public void validarNuevoPassword(String password){
+
+        //Valida si la contraseña pasada por parámetro está entre las 10.000 más fáciles.
+        if(this.commonPasswords.contains(password)){
+            throw new ContraseniaInvalidaException("La contraseña es fácil.");
+        }
+
+        //Valida si la contraseña pasada por parámetro cumple las recomendaciones de seguridad.
         for (Recomendacion recomendacione : recomendaciones) {
             if (!Pattern.matches(recomendacione.getRegex(), password)) {
                 throw new ContraseniaInvalidaException(recomendacione.getRequerimientoDeSeguridad());
