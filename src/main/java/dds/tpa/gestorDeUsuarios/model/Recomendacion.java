@@ -1,3 +1,5 @@
+package dds.tpa.gestorDeUsuarios.model;
+
 public class Recomendacion {
     private String regex;
     private String requerimientoDeSeguridad;

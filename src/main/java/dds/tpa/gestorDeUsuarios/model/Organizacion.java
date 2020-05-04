@@ -1,3 +1,5 @@
+package dds.tpa.gestorDeUsuarios.model;
+
 import java.util.Scanner;
 
 public class Organizacion {

@@ -1,3 +1,8 @@
+package dds.tpa.gestorDeUsuarios.model;
+
+import dds.tpa.gestorDeUsuarios.exceptions.ContraseniaIncorrectaException;
+import dds.tpa.gestorDeUsuarios.exceptions.ContraseniaInvalidaException;
+import dds.tpa.gestorDeUsuarios.exceptions.UsuarioExistenteException;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.util.encoders.Hex;
 import java.io.*;

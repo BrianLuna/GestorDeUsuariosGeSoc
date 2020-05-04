@@ -1,3 +1,5 @@
+package dds.tpa.gestorDeUsuarios.exceptions;
+
 public class UsuarioExistenteException extends RuntimeException{
 
     public UsuarioExistenteException(){
